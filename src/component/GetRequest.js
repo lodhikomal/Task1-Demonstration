@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
+let checkType = {
+  int: "textbox",
+  varchar: "textbox",
+  decimal: "number",
+  tinytext: "checkbox",
+  datetime: "date",
+  date: "date",
+};
 function GetRequest() {
   const [data, setData] = useState([]);
   //   const [store, setStore] = useState([]);
@@ -16,7 +25,7 @@ function GetRequest() {
   //   console.log(store, "finally");
   const handleChange = (e, index) => {
     console.log(e, index, "test");
-    // setData([e.target.value]);
+
     setData((prev) => {
       return [
         ...prev.slice(0, index),
@@ -29,6 +38,15 @@ function GetRequest() {
     });
   };
 
+  const handleSubmit = () => {
+    axios
+      .post("http://13.231.17.170:8080/test/submit", { data })
+
+      .then((res) => {
+        console.log(res, "final");
+      });
+  };
+
   console.log(data, " check");
 
   return (
@@ -39,9 +57,10 @@ function GetRequest() {
           <div>
             <label>{Field}=</label>
             <input
-              type="text"
+              type={checkType[Type]}
               placeholder=""
-              value={post?.Value || ""}
+              value={post?.Value}
+              //{post?.Value || ""}
               onChange={(e) => handleChange(e, index)}
             />
             <br></br>
@@ -49,7 +68,9 @@ function GetRequest() {
           </div>
         );
       })}
-      <button type="submit">Submit</button>
+      <button type="submit" onClick={handleSubmit}>
+        Submit
+      </button>
     </div>
   );
 }
