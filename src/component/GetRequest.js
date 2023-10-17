@@ -11,7 +11,7 @@ let checkType = {
 };
 function GetRequest() {
   const [data, setData] = useState([]);
-  //   const [store, setStore] = useState([]);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     axios
@@ -23,19 +23,25 @@ function GetRequest() {
   }, []);
 
   //   console.log(store, "finally");
-  const handleChange = (e, index) => {
-    console.log(e, index, "test");
+  const handleChange = (e, index, fieldType) => {
+    const newValue =
+      fieldType === "checkbox" ? e.target.checked : e.target.value;
+
+    console.log(newValue, "full");
 
     setData((prev) => {
       return [
         ...prev.slice(0, index),
         {
           ...prev[index],
-          Value: e.target.value, //add new value attribute
+          Value: newValue,
+
+          //add new value attribute
         },
         ...prev.slice(index + 1),
       ];
     });
+    setChecked(!checked);
   };
 
   const handleSubmit = () => {
@@ -69,8 +75,9 @@ function GetRequest() {
               placeholder=""
               value={post?.Value}
               //{post?.Value || ""}
-              onChange={(e) => handleChange(e, index)}
+              onChange={(e) => handleChange(e, index, checkType[Type])}
             />
+
             <br></br>
           </div>
         );
