@@ -31,7 +31,7 @@ function GetRequest() {
         ...prev.slice(0, index),
         {
           ...prev[index],
-          Value: e.target.value,
+          Value: e.target.value, //add new value attribute
         },
         ...prev.slice(index + 1),
       ];
@@ -39,15 +39,23 @@ function GetRequest() {
   };
 
   const handleSubmit = () => {
+    const newData = data.map((item) => {
+      return {
+        Field: item.Field,
+        Value: item.Value,
+      };
+    });
+    console.log(newData, " testing");
+
     axios
-      .post("http://13.231.17.170:8080/test/submit", { data })
+      .post("http://13.231.17.170:8080/test/submit", { data: newData })
 
       .then((res) => {
         console.log(res, "final");
       });
   };
 
-  console.log(data, " check");
+  // console.log(data, " check");
 
   return (
     <div>
@@ -64,7 +72,6 @@ function GetRequest() {
               onChange={(e) => handleChange(e, index)}
             />
             <br></br>
-            {/* <input type="checkbox" /> */}
           </div>
         );
       })}
