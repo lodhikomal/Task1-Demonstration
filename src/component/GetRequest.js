@@ -11,7 +11,7 @@ let checkType = {
 };
 function GetRequest() {
   const [data, setData] = useState([]);
-  const [checked, setChecked] = useState(false);
+  const [values, setValues] = useState([]);
 
   useEffect(() => {
     axios
@@ -22,46 +22,28 @@ function GetRequest() {
       });
   }, []);
 
-  //   console.log(store, "finally");
-  const handleChange = (e, index, fieldType) => {
-    const newValue =
-      fieldType === "checkbox" ? e.target.checked : e.target.value;
-
-    console.log(newValue, "full");
-
-    setData((prev) => {
-      return [
-        ...prev.slice(0, index),
-        {
-          ...prev[index],
-          Value: newValue,
-
-          //add new value attribute
-        },
-        ...prev.slice(index + 1),
-      ];
-    });
-    setChecked(!checked);
+  const handleChange = (e, index, Field) => {
+    const { name, value, type, checked } = e.target;
+    let updatedData = [...values];
+    const fieldType = checkType[type] || "textbox";
+    const itemIndex = updatedData.findIndex((item) => item.Field == name);
+    if (itemIndex !== -1) {
+      updatedData[itemIndex].Value = value;
+    } else {
+      updatedData.push({ Field: name, Value: value });
+    }
+    setValues([...updatedData]);
   };
 
+  console.log(values, "get");
   const handleSubmit = () => {
-    const newData = data.map((item) => {
-      return {
-        Field: item.Field,
-        Value: item.Value,
-      };
-    });
-    console.log(newData, " testing");
-
     axios
-      .post("http://13.231.17.170:8080/test/submit", { data: newData })
+      .post("http://13.231.17.170:8080/test/submit", { data: values })
 
       .then((res) => {
         console.log(res, "final");
       });
   };
-
-  // console.log(data, " check");
 
   return (
     <div>
@@ -73,9 +55,9 @@ function GetRequest() {
             <input
               type={checkType[Type]}
               placeholder=""
-              value={post?.Value}
-              //{post?.Value || ""}
-              onChange={(e) => handleChange(e, index, checkType[Type])}
+              // value={post?.Value}
+              name={Field}
+              onChange={(e) => handleChange(e, index, checkType[Type], Field)}
             />
 
             <br></br>
