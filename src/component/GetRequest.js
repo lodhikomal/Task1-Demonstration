@@ -22,20 +22,28 @@ function GetRequest() {
       });
   }, []);
 
-  const handleChange = (e, index, Field) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e) => {
+    const { name, value, checked, type } = e.target;
     let updatedData = [...values];
-    const fieldType = checkType[type] || "textbox";
     const itemIndex = updatedData.findIndex((item) => item.Field == name);
-    if (itemIndex !== -1) {
-      updatedData[itemIndex].Value = value;
+    if (type == "checkbox") {
+      if (itemIndex !== -1) {
+        updatedData[itemIndex].Value = checked;
+      } else {
+        updatedData.push({ Field: name, Value: checked });
+      }
     } else {
-      updatedData.push({ Field: name, Value: value });
+      if (itemIndex !== -1) {
+        updatedData[itemIndex].Value = value;
+      } else {
+        updatedData.push({ Field: name, Value: value });
+      }
     }
+
     setValues([...updatedData]);
   };
 
-  console.log(values, "get");
+  console.log(values, "intial values");
   const handleSubmit = () => {
     axios
       .post("http://13.231.17.170:8080/test/submit", { data: values })
